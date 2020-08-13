@@ -1,0 +1,19 @@
+version: '3.1'
+services: 
+    db:
+        build: ./db
+        command: --disable-partition-engine-check
+        restart: on-failure
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        ports:
+          - "3306:3306"  
+    search-service:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        restart: on-failure
+        ports:
+            - "8080:8080"
+        links:
+            - db

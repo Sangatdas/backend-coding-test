@@ -4,7 +4,7 @@ const mysql = require('mysql');
 // Keeps record of searches made by various users
 exports.insertSearch = (search) => {
     try {
-        const SQL = mysql.format("INSERT INTO searches (username, crypto, timestamp) VALUES (?, ?, CURRENT_TIMESTAMP)", [search.username, search.crypto]);
+        const SQL = mysql.format("INSERT INTO searches (username, crypto, searched_on) VALUES (?, ?, CURRENT_TIMESTAMP)", [search.username, search.crypto]);
         pool.getConnection((err, conn) => {
             if (err) throw err;
             conn.query(SQL, (err) => {
@@ -40,7 +40,7 @@ exports.getTopSearch = (search) => {
 exports.getLastSearchByUser = (search) => {
     let limit = 100;
     limit = (search.limit && search.limit > 0) ? parseInt(search.limit) : limit;
-    const SQL = mysql.format("SELECT DISTINCT crypto FROM (SELECT crypto, timestamp FROM searches WHERE username=? ORDER BY timestamp DESC LIMIT ?) AS last_searched", [search.username, limit]);
+    const SQL = mysql.format("SELECT DISTINCT crypto FROM (SELECT crypto, searched_on FROM searches WHERE username=? ORDER BY timestamp DESC LIMIT ?) AS last_searched", [search.username, limit]);
     let result = new Promise((resolve, reject) => {
         pool.getConnection((err, conn) => {
             if (err) reject(err);          
