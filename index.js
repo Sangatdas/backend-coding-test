@@ -16,13 +16,11 @@ app.post("/api/v1/search/", (req, res) => {
 });
 
 app.get("/api/v1/search/", async (req, res) => {
-    let username = req.query.username;
-    console.info("User: ", username);
-    if (username) {
-        let search = await Service.getLastSearchByUser(username);
+    if (req.query.username) {
+        let search = await Service.getLastSearchByUser(req.query);
         res.status(200).send(search);
     } else {
-        let search = await Service.getTopSearch();
+        let search = await Service.getTopSearch(req.query);
         res.status(200).send(search);
     }
 });

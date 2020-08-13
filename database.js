@@ -1,11 +1,13 @@
 const mysql = require('mysql');
 
 const pool = mysql.createPool({
-    connectionLimit: 20,
+    connectionLimit: 100,
     host: "localhost",
     user: "sangat",
     password: "password",
-    database: "searchdb"
+    database: "searchdb",
+    timeout: 1800,
+    connectTimeout: 3000
 });
 
 module.exports = pool;
