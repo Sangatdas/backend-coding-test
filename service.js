@@ -40,7 +40,7 @@ exports.getTopSearch = (limit) => {
 exports.getLastSearchByUser = (userId, limit) => {
     let search_limit = 100;
     search_limit = (limit && limit > 0) ? parseInt(limit) : search_limit;
-    const SQL = mysql.format("SELECT DISTINCT crypto FROM (SELECT coinId, searched_on FROM searches WHERE userId=? ORDER BY searched_on DESC LIMIT ?) AS last_searched", [username, search_limit]);
+    const SQL = mysql.format("SELECT DISTINCT coinId FROM (SELECT coinId, searched_on FROM searches WHERE userId=? ORDER BY searched_on DESC LIMIT ?) AS last_searched", [username, search_limit]);
     let result = new Promise((resolve, reject) => {
         pool.getConnection((err, conn) => {
             if (err) reject(err);          
