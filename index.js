@@ -13,17 +13,17 @@ const Service = require('./service');
 // Insert search query in DB
 app.post("/api/v1/search/", (req, res) => {
     Service.insertSearch(req.body);
-    res.sendStatus(200);
+    res.sendStatus(204);
 });
 
 // Retrieve search query from DB
 app.get("/api/v1/search/", async (req, res) => {
-    if (req.headers.userId) {
-        let result = await Service.getLastSearchByUser(req.headers.userId, req.query.limit);
-        res.status(200).send(result);
-    } else {
-        let result = await Service.getTopSearch(req.query.limit);
-        res.status(200).send(result);
+    try {
+        let result = await Service.getSearch(req.headers.userId, req.query.limit);
+        res.status(200).send(result);    
+    } catch (err) {
+        console.error(err);
+        res.status(400);
     }
 });
 

@@ -19,37 +19,28 @@ exports.insertSearch = (search) => {
 }
 
 // Gets top 100 (by default) crypto searches made by all users
-exports.getTopSearch = (limit) => {
-    let search_limit = 100;
-    search_limit = (limit && limit > 0) ? parseInt(limit) : search_limit;
-    const SQL = mysql.format("SELECT coinId FROM (SELECT coinId, COUNT(*) FROM distinct_search_last_24_hours GROUP BY coinId ORDER BY COUNT(*) DESC LIMIT ?) AS counts", [search_limit]);
-    let result = new Promise((resolve, reject) => {
-        pool.getConnection((err, conn) => {
-            if (err) reject(err);          
-            conn.query(SQL, (err, result) => {
-                if (err) reject(err);
-                conn.release();
-                resolve(result);
-            });
-        });
-    });
-    return result;
-}
-
 // Gets last 100 (by default) crypto searches by a particular user
-exports.getLastSearchByUser = (userId, limit) => {
+exports.getSearch = (userId, limit) => {
+    
     let search_limit = 100;
     search_limit = (limit && limit > 0) ? parseInt(limit) : search_limit;
-    const SQL = mysql.format("SELECT DISTINCT coinId FROM (SELECT coinId, searched_on FROM searches WHERE userId=? ORDER BY searched_on DESC LIMIT ?) AS last_searched", [userId, search_limit]);
+    let SQL = "";
+    // Decide query based on input
+    if (userId)
+        SQL = mysql.format("SELECT DISTINCT coinId FROM (SELECT coinId, searched_on FROM searches WHERE userId=? ORDER BY searched_on DESC LIMIT ?) AS last_searched", [userId, search_limit]);
+    else
+        SQL = mysql.format("SELECT coinId FROM (SELECT coinId, COUNT(*) FROM distinct_search_last_24_hours GROUP BY coinId ORDER BY COUNT(*) DESC LIMIT ?) AS counts", [search_limit]);
+    
     let result = new Promise((resolve, reject) => {
         pool.getConnection((err, conn) => {
             if (err) reject(err);          
             conn.query(SQL, (err, result) => {
-            if (err) reject(err);               
-                conn.release();
-                resolve(result);
+                if (err) reject(err);               
+                    conn.release();
+                    resolve(result);
             });
         });
     });
+
     return result;
 }
