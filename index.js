@@ -17,7 +17,7 @@ app.post("/api/v1/search/", (req, res) => {
 
 app.get("/api/v1/search/", async (req, res) => {
     if (req.headers.username) {
-        let result = await Service.getLastSearchByUser(req.headers.username, req.query.limit);
+        let result = await Service.getLastSearchByUser(req.headers.userId, req.query.limit);
         res.status(200).send(result);
     } else {
         let result = await Service.getTopSearch(req.query.limit);
