@@ -10,13 +10,15 @@ app.use(cors());
 
 const Service = require('./service');
 
+// Insert search query in DB
 app.post("/api/v1/search/", (req, res) => {
     Service.insertSearch(req.body);
     res.sendStatus(200);
 });
 
+// Retrieve search query from DB
 app.get("/api/v1/search/", async (req, res) => {
-    if (req.headers.username) {
+    if (req.headers.userId) {
         let result = await Service.getLastSearchByUser(req.headers.userId, req.query.limit);
         res.status(200).send(result);
     } else {
