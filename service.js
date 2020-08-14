@@ -19,10 +19,10 @@ exports.insertSearch = (search) => {
 }
 
 // Gets top 100 (by default) crypto searches made by all users
-exports.getTopSearch = (search) => {
-    let limit = 100;
-    limit = (search.limit && search.limit > 0) ? parseInt(search.limit) : limit;
-    const SQL = mysql.format("SELECT crypto FROM (SELECT crypto, COUNT(*) FROM distinct_search_last_24_hours GROUP BY crypto ORDER BY COUNT(*) DESC) AS counts", [limit]);
+exports.getTopSearch = (limit) => {
+    let search_limit = 100;
+    search_limit = (limit && limit > 0) ? parseInt(limit) : search_limit;
+    const SQL = mysql.format("SELECT crypto FROM (SELECT crypto, COUNT(*) FROM distinct_search_last_24_hours GROUP BY crypto ORDER BY COUNT(*) DESC) AS counts", [search_limit]);
     let result = new Promise((resolve, reject) => {
         pool.getConnection((err, conn) => {
             if (err) reject(err);          
@@ -37,10 +37,10 @@ exports.getTopSearch = (search) => {
 }
 
 // Gets last 100 (by default) crypto searches by a particular user
-exports.getLastSearchByUser = (search) => {
-    let limit = 100;
-    limit = (search.limit && search.limit > 0) ? parseInt(search.limit) : limit;
-    const SQL = mysql.format("SELECT DISTINCT crypto FROM (SELECT crypto, searched_on FROM searches WHERE username=? ORDER BY timestamp DESC LIMIT ?) AS last_searched", [search.username, limit]);
+exports.getLastSearchByUser = (username, limit) => {
+    let search_limit = 100;
+    search_limit = (limit && limit > 0) ? parseInt(limit) : search_limit;
+    const SQL = mysql.format("SELECT DISTINCT crypto FROM (SELECT crypto, searched_on FROM searches WHERE username=? ORDER BY searched_on DESC LIMIT ?) AS last_searched", [username, search_limit]);
     let result = new Promise((resolve, reject) => {
         pool.getConnection((err, conn) => {
             if (err) reject(err);          
